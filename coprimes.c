@@ -5,16 +5,16 @@
 #include <inttypes.h>
 #include "pcg_basic.h"
 
-pthread_mutex_t tuple_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t tuple_mutex = PTHREAD_MUTEX_INITIALIZER; //mutex lock in the incredibly unlikely event of a simultaneous read/write to the same index
 volatile char stop = 0, go = 0;     //stop kills loop in prngmachine, go stalls loop in improbabilityDrive
 
 
 typedef uint64_t ull;
 typedef uint32_t ulong;
 typedef uint16_t uint;
-typedef uint8_t uchar;
+typedef uint8_t uchar;  
 
-typedef struct{
+typedef struct{     //two ulongs for the price of both
     ulong a;
     ulong b;
 }tuple; 
@@ -45,11 +45,11 @@ static inline ull gcd(ull u, ull v){
 }
 
 static inline char coprimality(ull u, ull v){
-    if(!((u | v)) & 1) return 0;
+    if(!((u | v)) & 1) return 0;        //checks if both numbers are even
     return 1 == gcd(u, v);
 }
 
-static inline ulong sat_sub(ulong a, ulong b){
+static inline ulong sat_sub(ulong a, ulong b){   //saturated subtraction
     ulong res = a-b;
     res &= -(res<=a);
     return res;
@@ -90,6 +90,8 @@ void* prngmachine(void* arg){
 }
 
 void improbabilityDrive(tuple* tupleArr, ulong interval, uint sampleRate, uchar nearby, ulong size){
+    //checking the probability that two integers u and v are coprime, where u-v is some difference d.
+    //doing this in chunks, and increasing order to see if it changes over time (it does not)
     FILE *fp;
     fp = fopen("probs.csv", "w+");
     if(fp == NULL){
@@ -149,7 +151,7 @@ int main(void){
     printf("input scanned\n");
 
     ulong size = 17179869184/sizeof(tuple);
-    tuple* tupleArr = malloc(size*sizeof(tuple));
+    tuple* tupleArr = malloc(size*sizeof(tuple));           //lets the array be roughly 2gb
     printf("array created\n");
     prng_args args;
     args.tupleArr = tupleArr;
