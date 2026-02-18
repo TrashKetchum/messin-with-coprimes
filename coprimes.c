@@ -98,7 +98,7 @@ void improbabilityDrive(tuple* tupleArr, ulong interval, uint sampleRate, uchar 
         printf("Error opening csv.\n");
         return;
     }
-    fprintf(fp, "Interval,Ratio,Positives,Sample Rate\n");
+    fprintf(fp, "Interval,Ratio\n");
 
     ull u =0,v = 0;
     ull i = interval;
@@ -132,7 +132,7 @@ void improbabilityDrive(tuple* tupleArr, ulong interval, uint sampleRate, uchar 
         }while(total<sampleRate);
 
         ratio=(double)positives / (double)total;
-        fprintf(fp, "%llu,%lf,%u,%u\n", i, ratio, positives, total);
+        fprintf(fp, "%llu,%lf\n", i, ratio);
         i+=interval;
     }while(i<max);
 
