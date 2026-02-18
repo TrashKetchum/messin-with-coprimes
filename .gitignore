@@ -53,6 +53,7 @@ dkms.conf
 
 #uhhhhhhhhh
 *.csv
+*.xlsx
 
 # debug information files
 *.dwo
