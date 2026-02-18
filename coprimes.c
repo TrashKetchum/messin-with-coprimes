@@ -56,7 +56,6 @@ static inline ulong sat_sub(ulong a, ulong b){   //saturated subtraction
 }
 
 void* prngmachine(void* arg){
-    printf("prng thread booted\n");
     prng_args *args = (prng_args*) arg;
     tuple *tupleArr = args->tupleArr;
     ulong size = args->size;
@@ -85,7 +84,6 @@ void* prngmachine(void* arg){
             go=1;
         }
     }while(!stop);
-    printf("loop finished\n");
     return NULL;
 }
 
@@ -96,6 +94,7 @@ void improbabilityDrive(tuple* tupleArr, ulong interval, uint sampleRate, uchar 
     fp = fopen("probs.csv", "w+");
     if(fp == NULL){
         printf("Error opening csv.\n");
+        stop=1;
         return;
     }
     fprintf(fp, "Interval,Ratio\n");
@@ -105,9 +104,6 @@ void improbabilityDrive(tuple* tupleArr, ulong interval, uint sampleRate, uchar 
     ull max = 1000000000;
     uint arri = 0;
     double ratio;
-
-    printf("i: %lu\n", i);
-    printf("SampleRate:%u\n", sampleRate);
 
     do{  
         uint total=0, positives = 0;
@@ -148,11 +144,9 @@ int main(void){
     scanf("%" SCNu16, &sampleRate);
     scanf("%" SCNu8, &nearby);
 
-    printf("input scanned\n");
-
     ulong size = 17179869184/sizeof(tuple);
     tuple* tupleArr = malloc(size*sizeof(tuple));           //lets the array be roughly 2gb
-    printf("array created\n");
+
     prng_args args;
     args.tupleArr = tupleArr;
     args.size = size;
@@ -162,8 +156,6 @@ int main(void){
     pthread_t rngthread;
 
     pthread_create(&rngthread, NULL, prngmachine, &args);
-
-    printf("interval: %lu\n", interval);
 
     improbabilityDrive(tupleArr, interval, sampleRate, nearby, size);
  
