@@ -1,9 +1,15 @@
+/*
+ * Measuring the variance in probability for a given difference as integer size increases
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <pthread.h>
 #include <inttypes.h>
 #include "pcg_basic.h"
+
+
 
 pthread_mutex_t tuple_mutex = PTHREAD_MUTEX_INITIALIZER; //mutex lock in the incredibly unlikely event of a simultaneous read/write to the same index
 volatile char stop = 0, go = 0;     //stop kills loop in prngmachine, go stalls loop in improbabilityDrive
